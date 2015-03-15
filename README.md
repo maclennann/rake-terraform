@@ -1,5 +1,10 @@
 # rake-terraform
 
+[![Build Status](https://travis-ci.org/maclennann/rake-terraform.svg?branch=master)](https://travis-ci.org/maclennann/rake-terraform)
+[![Code Climate](https://codeclimate.com/github/maclennann/rake-terraform/badges/gpa.svg)](https://codeclimate.com/github/maclennann/rake-terraform)
+[![Test Coverage](https://codeclimate.com/github/maclennann/rake-terraform/badges/coverage.svg)](https://codeclimate.com/github/maclennann/rake-terraform)
+[![Gem](https://img.shields.io/gem/dtv/rake-terraform.svg)]()
+
 `rake-terraform` is a gem with a collection of rake tasks for working with [Hashicorp Terraform](https://terraform.io)
  and terraform configuration files.
 
