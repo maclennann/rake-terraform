@@ -46,19 +46,6 @@ module RakeTerraform
 
       private
 
-      def construct_command(creds)
-        access_key = creds[:accesskey]
-        secret_key = creds[:secretkey]
-
-        command = 'terraform plan '
-        command << "-var access_key=\"#{access_key}\" "
-        command << "-var secret_key=\"#{secret_key}\" "
-        command << '-module-depth 2 '
-        command << "-out #{@opts.get(:output_file)}" if @opts.get(:output_file)
-
-        command
-      end
-
       def ensure_plan_exists(plan)
         require 'fileutils'
         fail "Plan #{plan} does not exist! Aborting!" unless File.exist? plan

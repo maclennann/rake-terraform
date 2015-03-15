@@ -1,0 +1,12 @@
+language: ruby
+rvm:
+- 2.1.0
+- 2.0.0
+deploy:
+  provider: rubygems
+  gem: rake-terraform
+  on:
+    tags: true
+    all_branches: true
+  api_key:
+    secure: hOaHuMk5/lcedaCiP/GkICXy+tNS6uHrrkizoFn4Tv5GhWoAao77e4FWuZh9KNSAmiZIQwPa1z5b9kn8Rq2UE0QjrxBYmDFFp5uM4fDl7xzqPXREfZcBNmrjMFUhXSRnyZnm4rC69lGRQKTSJkHZDAUZfWobFMnouMtRyoDSCbU=
