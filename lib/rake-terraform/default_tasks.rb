@@ -3,6 +3,9 @@ require 'rake_terraform'
 namespace :terraform do
   env_glob = ENV['TERRAFORM_ENVIRONMENT_GLOB'] || 'terraform/**/*.tf'
   output_base = ENV['TERRAFORM_OUTPUT_BASE'] || 'output/terraform'
+  credential_file = ENV['TERRAFORM_CREDENTIAL_FILE'] || '~/.aws/credentials'
+  aws_project = ENV['TERRAFORM_AWS_PROJECT'] || 'default'
+
   environments = (Dir.glob env_glob).map { |f| File.dirname f }.uniq
 
   environments.each do |env|
@@ -12,8 +15,9 @@ namespace :terraform do
     desc "Plan migration of #{short_name}"
     terraform_plan "plan_#{short_name}" do |t|
       t.input_dir = env
-      t.aws_project = ENV['TERRAFORM_AWS_PROJECT'] || 'default'
+      t.aws_project = aws_project
       t.output_file = plan_path
+      t.credentials = credential_file
     end
 
     desc "Execute plan for #{short_name}"
