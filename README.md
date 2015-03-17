@@ -95,6 +95,7 @@ The following environment variables can be set to tweak `default_task`'s behavio
 * `ENV['TERRAFORM_AWS_PROJECT']` - Sets `t.aws_project` on the `terraform_plan` tasks (default: `default`)
 * `ENV['TERRAFORM_ENVIRONMENT_GLOB']` - Dir glob used to discover terraform environments (default: `terraform/**/*.tf`)
 * `ENV['TERRAFORM_OUTPUT_BASE']` - Directory to which plan files are saved/read. The environment name is appended to this automatically (default: `output/terraform`)
+* `ENV['TERRAFORM_CREDENTIAL_FILE']` - The path to your AWS credentials file (default: `~/.aws/credentials`)
 
 ## Contributing
 
