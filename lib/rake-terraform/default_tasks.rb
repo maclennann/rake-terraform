@@ -6,13 +6,16 @@ namespace :terraform do
   credential_file = ENV['TERRAFORM_CREDENTIAL_FILE'] || '~/.aws/credentials'
   aws_project = ENV['TERRAFORM_AWS_PROJECT'] || 'default'
 
+  # Set to string 'false' instead of bool so users can more-easily override
+  hide_tasks = ENV['TERRAFORM_HIDE_TASKS'] || 'false'
+
   environments = (Dir.glob env_glob).map { |f| File.dirname f }.uniq
 
   environments.each do |env|
     short_name = File.basename env
     plan_path = File.expand_path File.join(output_base, "#{short_name}.tf")
 
-    desc "Plan migration of #{short_name}"
+    desc "Plan migration of #{short_name}" if hide_tasks == 'false'
     terraform_plan "plan_#{short_name}" do |t|
       t.input_dir = env
       t.aws_project = aws_project
@@ -20,13 +23,13 @@ namespace :terraform do
       t.credentials = credential_file
     end
 
-    desc "Execute plan for #{short_name}"
+    desc "Execute plan for #{short_name}" if hide_tasks == 'false'
     terraform_apply "apply_#{short_name}" do |t|
       t.plan = plan_path
       t.execution_path = env
     end
 
-    desc "Plan and migrate #{short_name}"
+    desc "Plan and migrate #{short_name}" if hide_tasks == 'false'
     task short_name => %W(plan_#{short_name} apply_#{short_name})
   end
 
