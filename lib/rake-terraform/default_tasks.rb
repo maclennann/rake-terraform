@@ -1,4 +1,5 @@
 require 'rake_terraform'
+require 'pathname'
 
 namespace :terraform do
   env_glob = ENV['TERRAFORM_ENVIRONMENT_GLOB'] || 'terraform/**/*.tf'
@@ -9,10 +10,16 @@ namespace :terraform do
   # Set to string 'false' instead of bool so users can more-easily override
   hide_tasks = ENV['TERRAFORM_HIDE_TASKS'] || 'false'
 
+  # Might need a more comprehenvise regex to cover all cases
+  env_root = env_glob.match(/^((\w|\s|-)+\/?)+/).to_s
   environments = (Dir.glob env_glob).map { |f| File.dirname f }.uniq
 
   environments.each do |env|
-    short_name = File.basename env
+    relative_to_current = Pathname.new(env)
+    env_glob_root  = Pathname.new(env_root)
+    abs_relative_path = relative_to_current.relative_path_from(env_glob_root)
+
+    short_name = abs_relative_path.to_s.gsub('/', '_')
     plan_path = File.expand_path File.join(output_base, "#{short_name}.tf")
 
     desc "Plan migration of #{short_name}" if hide_tasks == 'false'
