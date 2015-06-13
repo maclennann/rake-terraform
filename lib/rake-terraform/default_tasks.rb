@@ -10,7 +10,10 @@ namespace :terraform do
   # Set to string 'false' instead of bool so users can more-easily override
   hide_tasks = ENV['TERRAFORM_HIDE_TASKS'] || 'false'
 
+  # Regex to determine the relative root path for env_glob
   # Might need a more comprehenvise regex to cover all cases
+  # Example Input: test/path to/some-file/**/*.tf
+  # Output: test/path to/some-file/
   env_root = env_glob.match(%r{^((\w|\s|-)+\/?)+}).to_s
   environments = (Dir.glob env_glob).map { |f| File.dirname f }.uniq
 
