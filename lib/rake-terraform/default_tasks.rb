@@ -11,7 +11,7 @@ namespace :terraform do
   hide_tasks = ENV['TERRAFORM_HIDE_TASKS'] || 'false'
 
   # Might need a more comprehenvise regex to cover all cases
-  env_root = env_glob.match(/^((\w|\s|-)+\/?)+/).to_s
+  env_root = env_glob.match(%r{^((\w|\s|-)+\/?)+}).to_s
   environments = (Dir.glob env_glob).map { |f| File.dirname f }.uniq
 
   environments.each do |env|
