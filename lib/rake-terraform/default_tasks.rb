@@ -19,10 +19,10 @@ namespace :terraform do
 
   environments.each do |env|
     relative_to_current = Pathname.new(env)
-    env_glob_root  = Pathname.new(env_root)
+    env_glob_root = Pathname.new(env_root)
     abs_relative_path = relative_to_current.relative_path_from(env_glob_root)
 
-    short_name = abs_relative_path.to_s.gsub('/', '_')
+    short_name = abs_relative_path.to_s.tr('/', '_')
     plan_path = File.expand_path File.join(output_base, "#{short_name}.tf")
 
     desc "Plan migration of #{short_name}" if hide_tasks == 'false'
