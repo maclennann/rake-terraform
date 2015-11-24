@@ -4,7 +4,8 @@ require 'pathname'
 namespace :terraform do
   env_glob = ENV['TERRAFORM_ENVIRONMENT_GLOB'] || 'terraform/**/*.tf'
   output_base = ENV['TERRAFORM_OUTPUT_BASE'] || 'output/terraform'
-  credential_file = ENV['TERRAFORM_CREDENTIAL_FILE'] || '~/.aws/credentials'
+  credential_file = ENV['TERRAFORM_CREDENTIAL_FILE']
+  credential_file ||= "#{Dir.home}/.aws/credentials"
   aws_project = ENV['TERRAFORM_AWS_PROJECT'] || 'default'
 
   # Set to string 'false' instead of bool so users can more-easily override
