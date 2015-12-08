@@ -15,3 +15,6 @@ mkmf.log
 terraform/
 .idea/
 output/
+
+# ignore bundlers vendor dir
+/vendor/bundle/
