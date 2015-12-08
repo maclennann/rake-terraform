@@ -97,6 +97,11 @@ The following environment variables can be set to tweak `default_task`'s behavio
 * `ENV['TERRAFORM_OUTPUT_BASE']` - Directory to which plan files are saved/read. The environment name is appended to this automatically (default: `output/terraform`)
 * `ENV['TERRAFORM_CREDENTIAL_FILE']` - The path to your AWS credentials file (default: `~/.aws/credentials`)
 
+## Testing
+
+There is currently a (very) basic rspec-based test harness in place. The
+default task runs unit tests and rubocop tests.
+
 ## Contributing
 
 1. Fork it ( https://github.com/maclennann/rake-terraform/fork )
