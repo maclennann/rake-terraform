@@ -43,6 +43,10 @@ module RakeTerraform
         let(:module_arg) { 56 }
         let(:access_key) { 'BISFITPONHYWERBENTEIN' }
         let(:secret_key) { 'trujRepGidjurivGomAyctyeOpVuWiuvafeeshjuo' }
+        let(:state_file) { "#{PROJECT_ROOT}/terraform/test_env/state_1.tfstate" }
+        let(:state_file_cmd) do
+          "terraform plan -module-depth 2 -state #{state_file}"
+        end
         context 'with no arguments' do
           it 'should call terraform plan' do
             expect(test_class_inst).to receive(:system)
@@ -72,17 +76,24 @@ module RakeTerraform
           end
         end
         context 'with an output file' do
-          it 'should call terraform plan with those vars configured' do
+          it 'should call terraform plan with an output file' do
             expect(test_class_inst).to receive(:system)
               .with(output_plan_cmd)
             test_class_inst.tf_plan(nil, nil, default_output_file)
+          end
+        end
+        context 'with an state file' do
+          it 'should call terraform plan with a state file' do
+            expect(test_class_inst).to receive(:system)
+              .with(state_file_cmd)
+            test_class_inst.tf_plan(nil, nil, nil, state_file)
           end
         end
         context 'where module_depth is given as an argument' do
           it 'should call terraform plan with updated module-depth argument' do
             expect(test_class_inst).to receive(:system)
               .with(module_arg_cmd)
-            test_class_inst.tf_plan(nil, nil, nil, module_arg)
+            test_class_inst.tf_plan(nil, nil, nil, nil, module_arg)
           end
         end
       end
@@ -127,6 +138,10 @@ module RakeTerraform
           "terraform apply -module-depth 56 #{default_plan_file}"
         end
         let(:module_arg) { 56 }
+        let(:state_file) { "#{PROJECT_ROOT}/terraform/test_env/state_1.tfstate" }
+        let(:state_file_cmd) do
+          "terraform apply -module-depth 2 -state #{state_file} #{default_plan_file}"
+        end
         context 'with no arguments' do
           it 'should raise an ArgumentError' do
             expect { test_class_inst.tf_apply }
@@ -140,11 +155,18 @@ module RakeTerraform
             test_class_inst.tf_apply(default_plan_file)
           end
         end
+        context 'where state file is given as an argument' do
+          it 'should call terraform apply with a state file argument' do
+            expect(test_class_inst).to receive(:system)
+              .with(state_file_cmd)
+            test_class_inst.tf_apply(default_plan_file, state_file)
+          end
+        end
         context 'where module_depth is given as an argument' do
           it 'should call terraform apply with updated module-depth argument' do
             expect(test_class_inst).to receive(:system)
               .with(module_arg_cmd)
-            test_class_inst.tf_apply(default_plan_file, module_arg)
+            test_class_inst.tf_apply(default_plan_file, nil, module_arg)
           end
         end
       end
