@@ -2,3 +2,12 @@ AllCops:
   Exclude:
     - 'spec/spec_helper.rb'
     - 'vendor/**/*'
+Style/FileName:
+  Exclude:
+    # usability - module name should match the gem name
+    - 'lib/rake-terraform.rb'
+Metrics/MethodLength:
+  Max: 12
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/unit/*_spec.rb'
