@@ -1,4 +1,4 @@
-require 'rake_terraform'
+require 'rake-terraform'
 require 'pathname'
 
 namespace :terraform do

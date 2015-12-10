@@ -52,7 +52,7 @@ You can set the following configuration for the task:
 * `t.execution_path`: The path from which to execute the plan (default: `./terraform`)
     * This is useful if you are referencing cloud-config files using relative paths
 
-To use these tasks, you should `require 'rake_terraform'` at the top of your Rakefile.
+To use these tasks, you should `require 'rake-terraform'` at the top of your Rakefile.
 
 ### Default Tasks
 

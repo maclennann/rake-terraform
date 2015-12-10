@@ -1,7 +1,9 @@
 require 'bundler/gem_tasks'
-require 'rake-terraform/default_tasks'
 require 'rubocop/rake_task'
 require 'rspec/core/rake_task'
+require 'rake-terraform'
+# include project rake tasks
+require 'rake-terraform/default_tasks'
 
 namespace :test do
   # default unit tests
