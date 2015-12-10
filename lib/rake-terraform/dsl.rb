@@ -7,7 +7,7 @@ module RakeTerraform
   # Definitions of methods for custom rake tasks
   module DSL
     def terraform_plan(*args)
-      require 'rake-terraform/tasks/plantask'
+      require 'rake-terraform/plantask'
       Rake::Task.define_task(*args) do
         c = RakeTerraform::PlanTask::Config.new
         yield c
@@ -16,7 +16,7 @@ module RakeTerraform
     end
 
     def terraform_apply(*args)
-      require 'rake-terraform/tasks/applytask'
+      require 'rake-terraform/applytask'
       Rake::Task.define_task(*args) do
         c = RakeTerraform::ApplyTask::Config.new
         yield c

@@ -1,4 +1,4 @@
-require 'rake-terraform/tasks/basetask'
+require 'rake-terraform/basetask'
 
 module RakeTerraform
   describe BaseTask do
