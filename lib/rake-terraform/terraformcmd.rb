@@ -2,6 +2,10 @@ module RakeTerraform
   # == RakeTerraform::TerraformCmd
   #
   # Helper module for running wrapping terraform calls
+  #
+  # TODO: refactor public methods to take splat arguments and write private
+  #       command builder methods
+  #
   module TerraformCmd
     # perform a 'terraform get'
     def tf_get(update = false)
