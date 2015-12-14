@@ -96,11 +96,98 @@ The following environment variables can be set to tweak `default_task`'s behavio
 * `ENV['TERRAFORM_ENVIRONMENT_GLOB']` - Dir glob used to discover terraform environments (default: `terraform/**/*.tf`)
 * `ENV['TERRAFORM_OUTPUT_BASE']` - Directory to which plan files are saved/read. The environment name is appended to this automatically (default: `output/terraform`)
 * `ENV['TERRAFORM_CREDENTIAL_FILE']` - The path to your AWS credentials file (default: `~/.aws/credentials`)
+* `ENV['TERRAFORM_UNIQUE_STATE']` - Whether to use a unique state for this run. Requires `TERRAFORM_STATE_FILE` OR `TERRAFORM_STATE_DIR_VAR`. Can be any truthy or falsey looking string from [this list][wannabe_bool_string] (e.g `TRUE` or `FALSE`) 
+* `ENV['TERRAFORM_STATE_FILE']` - The full path to a state file to use for this run. Only used when `TERRAFORM_UNIQUE_STATE` is true, and cannot be used in conjunction with `TERRAFORM_STATE_DIR_VAR`. 
+* `ENV['TERRAFORM_STATE_DIR_VAR']` - The name of an environment variable that holds a variable that will be used to reference a directory in which to store state files in for this run. This directory will be a subdirectory within the terraform environment. Only used when `TERRAFORM_STATE_DIR` is true, and cannot be used in conjunction with `TERRAFORM_STATE_FILE`
+
+[wannabe_bool_string]: https://github.com/prodis/wannabe_bool#string
+
+#### Unique States
+
+Bu default, `rake-terraform` stores state within a given environment directory.
+
+Sometimes, you will have several infrastructure environments ("infrastructure
+environment" in this block here taken to mean e.g "staging" or "production"
+rather than the broader "terraform environment" used more generally in this
+doc) that are relatively homogeneous in terms of resources, where all changes
+are rolled out through those infrastructure environments in a cascading manner.
+Through application of [variable interpolation][tf_doc_var_interpol] and other
+methods, you can provide differing configuration for each of your resources to
+match those infrastructure environments.  The issue with this is that Terraform
+does not support resource names as variables, so when you come to apply the
+same resource layout with differing configuration to the next infrastructure
+environment, Terraform will see those configuration changes as needing to be
+applied to the existing deployed resources.
+
+One solution to this problem is to keep each of your infrastructure
+environments in separate directories ("terraform environments"), each with
+their own state file. An issue with this solution is that it does not confirm
+to DRY principles, and also depends on you manually diffing changes between
+files etc, rather than relying on `git diff` or similar.  Another solution
+might be to use separate divergent git branches, and cherry-pick relevant
+commits between them. Again, depends on clean commit hygiene and easy to mess
+up manual steps.
+
+By using a unique state file for each of your infrastructure environments,
+whilst utilising a single terraform environment, you can avoid repeating
+yourself and manage roll out changes to each of your infrastructure
+environments better.
+
+To enable unique state files, you need to set the environment variable
+`TERRAFORM_UNIQUE_STATE` to a [truthy value][wannabe_bool_string], then you
+need to EITHER set `TERRAFORM_STATE_FILE` to the full path of your chosen state
+file, OR set `TERRAFORM_STATE_DIR_VAR` to the name of another environment
+variable containing the name of your infrastructure environment.
+
+[tf_doc_var_interpol]: https://www.terraform.io/docs/configuration/interpolation.html
+
+##### Examples
+
+Use a specific state file
+
+    $ export TERRAFORM_UNIQUE_STATE="TRUE"
+    $ export TERRAFORM_STATE_FILE="/home/dave/.tf_states/staging/web_tier.tfstate"
+    $ bundle exec rake terraform:plan_web_tier
+    ...
+
+Use a variable to lookup the state file directory
+
+    $ export TF_VAR_infra_env="staging"
+    $ export TERRAFORM_UNIQUE_STATE="TRUE"
+    $ export TERRAFORM_STATE_DIR_VAR="TF_VAR_infra_env"
+    $ bundle exec rake terraform:plan_web_tier
+    ...
+
+This would result in a directory layout resembling the following:
+
+    terraform
+      web_tier
+        main.tf
+        variables.tf
+        output.tf
+        state
+          staging
+            terraform.tfstate
+            terraform.tfstate.backup
+          production 
+            terraform.tfstate
+            terraform.tfstate.backup
+      app_tier
+        main.tf
+        variables.tf
+        output.tf
+        state
+          staging
+            terraform.tfstate
+            terraform.tfstate.backup
+          production 
+            terraform.tfstate
+            terraform.tfstate.backup
 
 ## Testing
 
-There is currently a (very) basic rspec-based test harness in place. The
-default task runs unit tests and rubocop tests.
+There is currently a basic rspec-based test harness in place. The default task
+runs unit tests and rubocop tests.
 
 ## Contributing
 
