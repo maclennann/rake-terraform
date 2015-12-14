@@ -119,6 +119,19 @@ module RakeTerraform
             expect(test_class_inst.tf_state_file).to eq(state_file_str)
           end
         end
+        context 'when TERRAFORM_STATE_FILE is _not_ given but ' \
+          'TERRAFORM_STATE_DIR_VAR and target variable are valid' do
+          let(:tf_state_dir_value) { 'state/staging' }
+          let(:tf_state_file_path) do
+            "#{PROJECT_ROOT}/terraform/#{tf_state_dir_value}/terraform.tfstate"
+          end
+          it 'should return the full path to the calculated state file' do
+            Dotenv.overload(
+              'spec/fixtures/envprocess_uniq_state_dir_var_valid.env'
+            )
+            expect(test_class_inst.tf_state_file).to eq(tf_state_file_path)
+          end
+        end
         context 'when TERRAFORM_STATE_FILE is an invalid string' do
           it 'should raise an ArgumentError' do
             Dotenv.overload(
@@ -166,6 +179,35 @@ module RakeTerraform
             )
             expect(test_class_inst.tf_state_dir).to eq(tf_state_dir_value)
           end
+        end
+      end
+
+      describe 'state_dir_full_path' do
+        # wrapper class for envprocess methods
+        let(:test_class) { Class.new { include RakeTerraform::EnvProcess } }
+        # instance of test class
+        let(:test_class_inst) { test_class.new }
+        let(:tf_state_dir_value) { 'state/staging' }
+        let(:tf_state_file_path) do
+          "#{PROJECT_ROOT}/terraform/#{tf_state_dir_value}/terraform.tfstate"
+        end
+        context 'when dir is "state/staging"' do
+          it 'should return the full path to the state file' do
+            expect(test_class_inst.state_dir_full_path)
+              .to eq(tf_state_file_path)
+          end
+        end
+      end
+
+      describe 'default_state_file_name' do
+        # wrapper class for envprocess methods
+        let(:test_class) { Class.new { include RakeTerraform::EnvProcess } }
+        # instance of test class
+        let(:test_class_inst) { test_class.new }
+        let(:default_state_file_name) { 'terraform.tfstate' }
+        it 'should return the value of the default state file name' do
+          expect(test_class_inst.default_state_file_name)
+            .to eq(default_state_file_name)
         end
       end
     end
