@@ -19,7 +19,7 @@ module RakeTerraform
                 output_file = nil, state_file = nil, module_depth = 2)
       cmd = 'terraform plan'
       cmd << " -module-depth #{module_depth}"
-      state_file && cmd << " -state=#{state_file}"
+      state_file && cmd << " -state #{state_file}"
       if access_key && secret_key
         # TODO: additional escaped quotes required?
         cmd << " -var access_key=\"#{access_key}\""
@@ -45,7 +45,7 @@ module RakeTerraform
     def tf_apply(plan_file, state_file = nil, module_depth = 2)
       cmd = 'terraform apply'
       cmd << " -module-depth #{module_depth}"
-      state_file && cmd << " -state=#{state_file}"
+      state_file && cmd << " -state #{state_file}"
       cmd << " #{plan_file}"
       system(cmd)
     end

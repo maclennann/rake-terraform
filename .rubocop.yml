@@ -11,3 +11,11 @@ Metrics/MethodLength:
 Metrics/ModuleLength:
   Exclude:
     - 'spec/unit/*_spec.rb'
+Metrics/CyclomaticComplexity:
+  Exclude:
+      # TODO: fix tf_plan method to support splat arguments and break
+      # down into one or more command constructor methods
+      - 'lib/rake-terraform/terraformcmd.rb'
+Metrics/PerceivedComplexity:
+  Exclude:
+      - 'lib/rake-terraform/terraformcmd.rb'

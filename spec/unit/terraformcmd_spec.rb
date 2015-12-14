@@ -43,7 +43,9 @@ module RakeTerraform
         let(:module_arg) { 56 }
         let(:access_key) { 'BISFITPONHYWERBENTEIN' }
         let(:secret_key) { 'trujRepGidjurivGomAyctyeOpVuWiuvafeeshjuo' }
-        let(:state_file) { "#{PROJECT_ROOT}/terraform/test_env/state_1.tfstate" }
+        let(:state_file) do
+          "#{PROJECT_ROOT}/terraform/test_env/state_1.tfstate"
+        end
         let(:state_file_cmd) do
           "terraform plan -module-depth 2 -state #{state_file}"
         end
@@ -138,9 +140,12 @@ module RakeTerraform
           "terraform apply -module-depth 56 #{default_plan_file}"
         end
         let(:module_arg) { 56 }
-        let(:state_file) { "#{PROJECT_ROOT}/terraform/test_env/state_1.tfstate" }
+        let(:state_file) do
+          "#{PROJECT_ROOT}/terraform/test_env/state_1.tfstate"
+        end
         let(:state_file_cmd) do
-          "terraform apply -module-depth 2 -state #{state_file} #{default_plan_file}"
+          'terraform apply -module-depth 2 -state ' \
+            "#{state_file} #{default_plan_file}"
         end
         context 'with no arguments' do
           it 'should raise an ArgumentError' do
