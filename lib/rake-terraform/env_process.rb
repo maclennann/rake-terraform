@@ -8,19 +8,21 @@ module RakeTerraform
   # TODO: refactor all non accessor methods as private methods
   #
   module EnvProcess
-    attr_reader :tf_unique_state, :tf_state_file, :tf_state_dir_var,
-                :tf_state_dir
+    attr_reader :unique_state, :state_file, :state_dir_var, :state_dir,
+                :tf_environment
 
     def initialize
-      tf_unique_state_valid? && @tf_unique_state = tf_unique_state
-      tf_state_dir_var_valid? && @tf_state_var_dir = tf_state_dir_var
+      @unique_state, @state_file, @state_dir_var, @state_dir = nil
+      @tf_environment = nil
+      tf_unique_state_valid? && @unique_state = tf_unique_state
+      tf_state_dir_var_valid? && @state_dir_var = tf_state_dir_var
       # tf_state_file represents the full path to the calculated file within
       # tf_state_dir if given
       if tf_state_dir_valid?
-        @tf_state_dir = tf_state_dir
-        @tf_state_file = tf_state_file
+        @state_dir = tf_state_dir
+        @state_file = tf_state_file
       end
-      tf_state_file_valid? && @tf_state_file = tf_state_file
+      tf_state_file_valid? && @state_file = tf_state_file
     end
 
     # whether or not unique states are enabled and required args are also given
@@ -37,7 +39,7 @@ module RakeTerraform
       ENV['TERRAFORM_UNIQUE_STATE'].to_b
     end
 
-    # if we are using tf_state_var_dir and that is valid, then return the full
+    # if we are using tf_state_dir_var and that is valid, then return the full
     # path to the calculated state file. Otherwise return the value of a valid
     # TERRAFORM_STATE_FILE variable
     def tf_state_file
@@ -52,9 +54,9 @@ module RakeTerraform
       ENV['TERRAFORM_STATE_FILE']
     end
 
-    # return the value if tf_state_var_dir
+    # return the value if tf_state_dir_var
     # see also: tf_state_dir
-    def tf_state_var_dir
+    def tf_state_dir_var
       return nil if ENV['TERRAFORM_STATE_DIR_VAR'].nil?
       unless tf_state_dir_var_valid?
         fail(
@@ -66,7 +68,7 @@ module RakeTerraform
     end
 
     # return the target of tf_state_dir_var
-    # see also: tf_state_var_dir
+    # see also: tf_state_dir_var
     def tf_state_dir
       return nil if ENV['TERRAFORM_STATE_DIR_VAR'].nil?
       unless tf_state_dir_valid?
@@ -76,14 +78,24 @@ module RakeTerraform
         )
       end
       dir_var = ENV['TERRAFORM_STATE_DIR_VAR']
-      "state/#{ENV[dir_var]}"
+      "#{tf_env_string}state/#{ENV[dir_var]}"
     end
 
     # calculate the full path to a state file within tf_state_dir
     def state_dir_full_path(dir = tf_state_dir)
       File.expand_path(
-        File.join('terraform', dir, default_state_file_name)
+        File.join(dir, default_state_file_name)
       )
+    end
+
+    # if @tf_environment is set then return that, postfixed by a '/' -
+    # otherwise return 'terraform/'
+    def tf_env_string
+      if @tf_environment
+        "#{@tf_environment}/"
+      else
+        'terraform/'
+      end
     end
 
     # validate tf_unique_state

@@ -9,6 +9,11 @@ module RakeTerraform
       let(:test_class) { Class.new { include RakeTerraform::TerraformCmd } }
       # instance of test class
       let(:test_class_inst) { test_class.new }
+      before(:all) do
+        Dotenv.overload(
+          'spec/fixtures/set_all_variables_nil.env'
+        )
+      end
 
       describe 'tf_get' do
         let(:get_cmd) { 'terraform get' }

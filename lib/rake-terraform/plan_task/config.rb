@@ -1,24 +1,50 @@
+require 'rake-terraform/env_process'
+
 module RakeTerraform
   module PlanTask
     # Configuration data for terraform plan task
     class Config
-      attr_accessor :input_dir
-      attr_accessor :output_file
-      attr_accessor :credentials
-      attr_accessor :aws_project
+      prepend RakeTerraform::EnvProcess
+
+      attr_writer :aws_project, :credentials, :output_file
 
       def initialize
-        @input_dir = File.expand_path 'terraform'
-        @output_file = File.expand_path(default_output)
-        @credentials = File.expand_path(default_credentials)
-        @aws_project = 'default'
+        # initialize RakeTerraform::EnvProcess
+        super
+      end
+
+      def aws_project
+        @aws_project ||= 'default'
+      end
+
+      def credentials
+        @credentials ||= File.expand_path(default_credentials)
+      end
+
+      def output_file
+        @output_file ||= File.expand_path(default_output)
+      end
+
+      def input_dir
+        @input_dir ||= File.expand_path 'terraform'
+      end
+
+      # setter method for input_dir triggers setters for tf_environment and
+      # state_file so that these are dynamically updated on change (but only if
+      # we are using directory state, and not explicit path to a state file)
+      def input_dir=(dir)
+        @tf_environment = dir
+        @state_file = tf_state_file if @state_dir
+        @input_dir = dir
       end
 
       def opts
-        Map.new(input_dir:   @input_dir,
-                output_file: @output_file,
-                credentials: @credentials,
-                aws_project: @aws_project)
+        Map.new(input_dir:   input_dir,
+                output_file: output_file,
+                credentials: credentials,
+                aws_project: aws_project,
+                unique_state: unique_state,
+                state_file: state_file)
       end
 
       private

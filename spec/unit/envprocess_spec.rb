@@ -5,6 +5,11 @@ module RakeTerraform
   # envprocess unit tests
   module EnvProcess
     describe 'EnvProcess' do
+      before(:all) do
+        Dotenv.overload(
+          'spec/fixtures/set_all_variables_nil.env'
+        )
+      end
       # load the environment into instance variables
       describe 'initialize' do
         # wrapper class for envprocess methods
@@ -23,12 +28,51 @@ module RakeTerraform
             Dotenv.overload(
               'spec/fixtures/envprocess_uniq_state_false_file_valid.env'
             ) do
-              expect(test_class_inst.tf_unique_state).to eq(false)
+              expect(test_class_inst.unique_state).to eq(false)
             end
             Dotenv.overload(
               'spec/fixtures/envprocess_uniq_state_true_file_valid.env'
             ) do
-              expect(test_class_inst.tf_unique_state).to eq(false)
+              expect(test_class_inst.unique_state).to eq(false)
+            end
+          end
+        end
+        context 'When unique state and TERRAFORM_STATE_FILE are provided ' \
+         'and valid' do
+          let(:state_file_str) { '/tmp/some_state.tfstate' }
+          Dotenv.overload(
+            'spec/fixtures/envprocess_uniq_state_true_file_valid.env'
+          ) do
+            it 'should set state_file to the expected string' do
+              expect(test_class_inst.state_file).to eq(state_file_str)
+            end
+            it 'should set state_dir_var to nil' do
+              expect(test_class_inst.state_dir_var).to eq(nil)
+            end
+            it 'should set state_dir to nil' do
+              expect(test_class_inst.state_dir).to eq(nil)
+            end
+          end
+        end
+
+        context 'When unique state and TERRAFORM_STATE_DIR_VAR are provided ' \
+         'and valid' do
+          let(:tf_state_dir_value) { 'terraform/state/staging' }
+          let(:tf_state_dir_var) { 'SOMETHING' }
+          let(:tf_state_file_path) do
+            "#{PROJECT_ROOT}/terraform/#{tf_state_dir_value}/terraform.tfstate"
+          end
+          Dotenv.overload(
+            'spec/fixtures/envprocess_uniq_state_dir_var_valid.env'
+          ) do
+            it 'should set state_file to the expected string' do
+              expect(test_class_inst.state_file).to eq(tf_state_file_path)
+            end
+            it 'should set state_dir_var to "SOMETHING"' do
+              expect(test_class_inst.state_dir_var).to eq(tf_state_dir_var)
+            end
+            it 'should set state_dir to state/staging' do
+              expect(test_class_inst.state_dir).to eq(tf_state_dir_value)
             end
           end
         end
@@ -47,7 +91,7 @@ module RakeTerraform
             expect(test_class_inst.tf_unique_state).to eq(false)
           end
         end
-        context 'when TERRAFORM_UNIQUE_STATE is true but dependent' \
+        context 'when TERRAFORM_UNIQUE_STATE is true but dependent ' \
           'variables are missing' do
           it 'should raise ArgumentError when no other variables are given' do
             Dotenv.overload('spec/fixtures/envprocess_uniq_state_true.env')
@@ -80,7 +124,7 @@ module RakeTerraform
               )
           end
         end
-        context 'when TERRAFORM_UNIQUE_STATE is true but dependent' \
+        context 'when TERRAFORM_UNIQUE_STATE is true but dependent ' \
           'variables are missing' do
           it 'should return an ArgumentError' do
             Dotenv.load('spec/fixtures/envprocess_uniq_state_true.env')
@@ -121,9 +165,9 @@ module RakeTerraform
         end
         context 'when TERRAFORM_STATE_FILE is _not_ given but ' \
           'TERRAFORM_STATE_DIR_VAR and target variable are valid' do
-          let(:tf_state_dir_value) { 'state/staging' }
+          let(:tf_state_dir_value) { 'terraform/state/staging' }
           let(:tf_state_file_path) do
-            "#{PROJECT_ROOT}/terraform/#{tf_state_dir_value}/terraform.tfstate"
+            "#{PROJECT_ROOT}/#{tf_state_dir_value}/terraform.tfstate"
           end
           it 'should return the full path to the calculated state file' do
             Dotenv.overload(
@@ -157,7 +201,7 @@ module RakeTerraform
             Dotenv.overload(
               'spec/fixtures/envprocess_uniq_state_dir_var_invalid.env'
             )
-            expect { test_class_inst.tf_state_var_dir }
+            expect { test_class_inst.tf_state_dir_var }
               .to raise_error(
                 ArgumentError,
                 /^Argument for TERRAFORM_STATE_DIR_VAR is invalid/
@@ -171,7 +215,7 @@ module RakeTerraform
         let(:test_class) { Class.new { include RakeTerraform::EnvProcess } }
         # instance of test class
         let(:test_class_inst) { test_class.new }
-        let(:tf_state_dir_value) { 'state/staging' }
+        let(:tf_state_dir_value) { 'terraform/state/staging' }
         context 'when TERRAFORM_STATE_DIR_VAR points to a valid value' do
           it 'should return the value ' do
             Dotenv.overload(
@@ -184,15 +228,19 @@ module RakeTerraform
 
       describe 'state_dir_full_path' do
         # wrapper class for envprocess methods
-        let(:test_class) { Class.new { include RakeTerraform::EnvProcess } }
-        # instance of test class
+        let(:test_class) { Class.new { prepend RakeTerraform::EnvProcess } }
         let(:test_class_inst) { test_class.new }
+        # instance of test class
+        let(:tf_environment) { 'terraform/eu-west-1' }
         let(:tf_state_dir_value) { 'state/staging' }
         let(:tf_state_file_path) do
           "#{PROJECT_ROOT}/terraform/#{tf_state_dir_value}/terraform.tfstate"
         end
-        context 'when dir is "state/staging"' do
+        context 'when tf_environment is "state/staging"' do
           it 'should return the full path to the state file' do
+            Dotenv.overload(
+              'spec/fixtures/envprocess_uniq_state_dir_var_valid.env'
+            )
             expect(test_class_inst.state_dir_full_path)
               .to eq(tf_state_file_path)
           end
