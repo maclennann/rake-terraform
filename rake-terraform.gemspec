@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1'
   spec.add_development_dependency 'rubocop', '~> 0.29'
   spec.add_development_dependency 'rspec', '~> 3.0.0'
+  spec.add_dependency 'dotenv', '~> 2.0.0'
   spec.add_dependency 'wannabe_bool', '~> 0.3.0'
   spec.add_dependency 'rake', '~> 10.0'
   spec.add_dependency 'map', '~> 6.5'
