@@ -12,7 +12,11 @@ module RakeTerraform
         # reset default config object before each test
         @default_config = RakeTerraform::ApplyTask::Config.new
       end
-
+      before(:all) do
+        Dotenv.overload(
+          'spec/fixtures/set_all_variables_nil.env'
+        )
+      end
       it 'should initialize successfully with no arguments' do
         expect { RakeTerraform::ApplyTask::Config.new }.to_not raise_error
       end
@@ -31,6 +35,16 @@ module RakeTerraform
       end
 
       describe 'execution_path' do
+        after(:all) do
+          Dotenv.overload(
+            'spec/fixtures/set_all_variables_nil.env'
+          )
+        end
+        let(:tf_environment) { 'terraform/eu-west-1' }
+        let(:tf_state_dir_value) { "#{tf_environment}/state/staging" }
+        let(:tf_state_file_path) do
+          "#{PROJECT_ROOT}/#{tf_state_dir_value}/terraform.tfstate"
+        end
         context 'with a default config object' do
           it 'should be a string matching default_exec_path_string' do
             expect(@default_config.execution_path)
@@ -40,6 +54,31 @@ module RakeTerraform
             expect { @default_config.execution_path = non_existent_path }
               .to_not raise_error
             expect(@default_config.execution_path).to eq(non_existent_path)
+          end
+        end
+        context 'when I set the execution_path to something else and ' \
+          'state_dir is true' do
+          Dotenv.overload(
+            'spec/fixtures/envprocess_uniq_state_dir_var_valid.env'
+          ) do
+            it 'should update execution_path , tf_environment and state_file' do
+              @default_config.execution_path = tf_environment
+              expect(@default_config.tf_environment).to eq(tf_environment)
+              expect(@default_config.state_file).to eq(tf_state_file_path)
+            end
+          end
+        end
+        context 'when I set execution_path to something else and state_dir ' \
+          'is false' do
+          Dotenv.overload(
+            'spec/fixtures/envprocess_uniq_state_true_file_valid.env'
+          ) do
+            it 'should update execution_path, tf_environment but _not_ ' \
+            'state_file' do
+              @default_config.execution_path = tf_environment
+              expect(@default_config.tf_environment).to eq(tf_environment)
+              expect(@default_config.state_file).to eq(nil)
+            end
           end
         end
       end

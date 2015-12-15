@@ -14,20 +14,26 @@ module RakeTerraform
 
       def execute
         plan = @opts.get(:plan)
-        validate_terraform_installed
-        ensure_plan_exists plan
-
-        tf_show(plan)
-
-        say 'The above changes will be applied to your environment.'
-        exit unless agree 'Are you sure you want to execute this plan? (y/n)'
-
+        pre_execute_checks(plan)
         Dir.chdir(@opts.get(:execution_path)) do
-          tf_apply(plan)
+          if @opts[:unique_state]
+            tf_apply(plan, @opts[:state_file])
+          else
+            tf_apply(plan)
+          end
         end
       end
 
       private
+
+      # run pre execution checks
+      def pre_execute_checks(plan = @opts.get(:plan))
+        validate_terraform_installed
+        ensure_plan_exists plan
+        tf_show(plan)
+        say 'The above changes will be applied to your environment.'
+        exit unless agree 'Are you sure you want to execute this plan? (y/n)'
+      end
 
       def ensure_plan_exists(plan)
         fail "Plan #{plan} does not exist! Aborting!" unless File.exist? plan
