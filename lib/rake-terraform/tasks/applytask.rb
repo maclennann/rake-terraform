@@ -1,3 +1,4 @@
+require 'rake-terraform/tasks/basetask'
 module RakeTerraform
   module ApplyTask
     # Configuration data for terraform apply task
