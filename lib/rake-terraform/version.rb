@@ -1,4 +1,4 @@
 # Version of the gem
 module RakeTerraform
-  VERSION = '0.0.8'
+  VERSION = '0.2.0'
 end
