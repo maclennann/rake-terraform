@@ -46,9 +46,8 @@ module RakeTerraform
 
     # perform a 'terraform apply'
     #
-    def tf_apply(plan_file, state_file = nil, module_depth = 2)
+    def tf_apply(plan_file, state_file = nil)
       cmd = 'terraform apply'
-      cmd << " -module-depth #{module_depth}"
       state_file && cmd << " -state #{state_file}"
       cmd << " #{plan_file}"
       system(cmd)

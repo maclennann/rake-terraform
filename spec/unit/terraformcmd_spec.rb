@@ -139,17 +139,13 @@ module RakeTerraform
       describe 'tf_apply' do
         let(:default_plan_file) { "#{PROJECT_ROOT}/output/terraform/plan.tf" }
         let(:default_apply_cmd) do
-          "terraform apply -module-depth 2 #{default_plan_file}"
+          "terraform apply #{default_plan_file}"
         end
-        let(:module_arg_cmd) do
-          "terraform apply -module-depth 56 #{default_plan_file}"
-        end
-        let(:module_arg) { 56 }
         let(:state_file) do
           "#{PROJECT_ROOT}/terraform/test_env/state_1.tfstate"
         end
         let(:state_file_cmd) do
-          'terraform apply -module-depth 2 -state ' \
+          'terraform apply -state ' \
             "#{state_file} #{default_plan_file}"
         end
         context 'with no arguments' do
@@ -170,13 +166,6 @@ module RakeTerraform
             expect(test_class_inst).to receive(:system)
               .with(state_file_cmd)
             test_class_inst.tf_apply(default_plan_file, state_file)
-          end
-        end
-        context 'where module_depth is given as an argument' do
-          it 'should call terraform apply with updated module-depth argument' do
-            expect(test_class_inst).to receive(:system)
-              .with(module_arg_cmd)
-            test_class_inst.tf_apply(default_plan_file, nil, module_arg)
           end
         end
       end
