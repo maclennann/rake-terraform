@@ -1,3 +1,5 @@
 --color
+--tty
 --warnings
 --require spec_helper
+--format documentation

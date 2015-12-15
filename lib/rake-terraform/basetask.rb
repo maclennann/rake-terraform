@@ -1,4 +1,5 @@
 require 'rake/task'
+require 'fileutils'
 require 'iniparse'
 require 'English'
 
@@ -7,7 +8,7 @@ module RakeTerraform
   class BaseTask < Rake::Task
     def validate_terraform_installed
       error = 'Please ensure you have terraform installed and on your path!'
-      fail error unless terraform_installed?
+      fail TerraformNotInstalled, error unless terraform_installed?
     end
 
     def terraform_installed?
