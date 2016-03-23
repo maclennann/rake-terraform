@@ -2,8 +2,6 @@ require 'rake'
 
 # Rake terraform
 module RakeTerraform
-  private
-
   # Definitions of methods for custom rake tasks
   module DSL
     def terraform_plan(*args)

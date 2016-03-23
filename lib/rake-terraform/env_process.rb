@@ -30,7 +30,7 @@ module RakeTerraform
       state_var = ENV['TERRAFORM_UNIQUE_STATE'].to_b
       return false if state_var == false
       unless tf_unique_state_valid?
-        fail(
+        raise(
           ArgumentError,
           'Both or neither of TERRAFORM_STATE_FILE or TERRAFORM_STATE_DIR_VAR' \
           ' given, or missing target for TERRAFORM_STATE_DIR_VAR'
@@ -46,7 +46,7 @@ module RakeTerraform
       return state_dir_full_path if tf_state_dir_valid?
       return nil if ENV['TERRAFORM_STATE_FILE'].nil?
       unless tf_state_file_valid?
-        fail(
+        raise(
           ArgumentError,
           'Argument for TERRAFORM_STATE_FILE is invalid'
         )
@@ -59,7 +59,7 @@ module RakeTerraform
     def tf_state_dir_var
       return nil if ENV['TERRAFORM_STATE_DIR_VAR'].nil?
       unless tf_state_dir_var_valid?
-        fail(
+        raise(
           ArgumentError,
           'Argument for TERRAFORM_STATE_DIR_VAR is invalid'
         )
@@ -72,7 +72,7 @@ module RakeTerraform
     def tf_state_dir
       return nil if ENV['TERRAFORM_STATE_DIR_VAR'].nil?
       unless tf_state_dir_valid?
-        fail(
+        raise(
           ArgumentError,
           'Argument for TERRAFORM_STATE_DIR_VAR is invalid'
         )
@@ -102,11 +102,8 @@ module RakeTerraform
     def tf_unique_state_valid?
       state_var = ENV['TERRAFORM_UNIQUE_STATE'].to_b
       return true if state_var == false
-      if tf_state_file_valid? && tf_state_dir_var_valid?
-        return false
-      else
-        tf_state_file_valid? || tf_state_dir_var_valid?
-      end
+      return false if tf_state_file_valid? && tf_state_dir_var_valid?
+      tf_state_file_valid? || tf_state_dir_var_valid?
     end
 
     # validate tf_state_file_valid?
@@ -132,7 +129,7 @@ module RakeTerraform
       value =~ /^[a-z0-9_]+$/i
     end
 
-    alias_method :tf_state_dir_valid?, :tf_state_dir_var_valid?
+    alias tf_state_dir_valid? tf_state_dir_var_valid?
 
     # name of the default state file
     def default_state_file_name

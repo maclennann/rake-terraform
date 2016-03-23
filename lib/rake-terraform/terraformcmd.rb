@@ -29,7 +29,7 @@ module RakeTerraform
         cmd << " -var access_key=\"#{access_key}\""
         cmd << " -var secret_key=\"#{secret_key}\""
       elsif access_key || secret_key
-        fail ArgumentError, 'Only one of access_key or secret_key given'
+        raise ArgumentError, 'Only one of access_key or secret_key given'
       end
       output_file && cmd << " -out #{output_file}"
       system(cmd)

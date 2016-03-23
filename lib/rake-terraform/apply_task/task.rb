@@ -36,7 +36,7 @@ module RakeTerraform
       end
 
       def ensure_plan_exists(plan)
-        fail "Plan #{plan} does not exist! Aborting!" unless File.exist? plan
+        raise "Plan #{plan} does not exist! Aborting!" unless File.exist? plan
       end
     end
   end
