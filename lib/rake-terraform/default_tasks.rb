@@ -8,9 +8,6 @@ namespace :terraform do
   #       classes
   env_glob = ENV['TERRAFORM_ENVIRONMENT_GLOB'] || 'terraform/**/*.tf'
   output_base = ENV['TERRAFORM_OUTPUT_BASE'] || 'output/terraform'
-  credential_file = ENV['TERRAFORM_CREDENTIAL_FILE']
-  credential_file ||= "#{Dir.home}/.aws/credentials"
-  aws_project = ENV['TERRAFORM_AWS_PROJECT'] || 'default'
 
   # Set to string 'false' instead of bool so users can more-easily override
   hide_tasks = ENV['TERRAFORM_HIDE_TASKS'] || 'false'
@@ -28,13 +25,17 @@ namespace :terraform do
     abs_relative_path = relative_to_current.relative_path_from(env_glob_root)
 
     short_name = abs_relative_path.to_s.tr('/', '_')
+
+    desc "Initialize Terraform for use in #{short_name}"
+    terraform_init "init_#{short_name}" do |t|
+      t.input_dir = env
+    end
+
     plan_path = File.expand_path File.join(output_base, "#{short_name}.tf")
     desc "Plan migration of #{short_name}" if hide_tasks == 'false'
     terraform_plan "plan_#{short_name}" do |t|
       t.input_dir = env
-      t.aws_project = aws_project
       t.output_file = plan_path
-      t.credentials = credential_file
     end
 
     desc "Execute plan for #{short_name}" if hide_tasks == 'false'
@@ -44,7 +45,7 @@ namespace :terraform do
     end
 
     desc "Plan and migrate #{short_name}" if hide_tasks == 'false'
-    task short_name => %W(plan_#{short_name} apply_#{short_name})
+    task short_name => ["plan_#{short_name}", "apply_#{short_name}"]
   end
 
   desc 'Plan and migrate all environments'
