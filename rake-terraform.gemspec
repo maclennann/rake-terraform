@@ -1,4 +1,5 @@
 # coding: utf-8
+
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'rake-terraform/version'
@@ -22,11 +23,11 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 1'
-  spec.add_development_dependency 'rubocop', '~> 0.29'
+  spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rspec', '~> 3.0.0'
   spec.add_dependency 'dotenv', '~> 2.0.0'
   spec.add_dependency 'wannabe_bool', '~> 0.3.0'
-  spec.add_dependency 'rake', '~> 10.0'
+  spec.add_dependency 'rake', '~> 12.0'
   spec.add_dependency 'map', '~> 6.5'
   spec.add_runtime_dependency 'highline', '~> 1.7'
   spec.add_runtime_dependency 'iniparse', '~> 1.3'
