@@ -40,8 +40,6 @@ You can set the following configuration for the task:
 
 * `t.input_dir` - the directory from which to read terraform config (default: `./terraform`)
 * `t.output_file` - the path and name of the plan file to generate (default: `./output/terraform/plan.tf`)
-* `t.credentials` - the path of the [AWS credentials file](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-config-files) to read from (default: `~/.aws/credentials`)
-* `t.aws_project` - the name of the project to use from your credentials file (default: `default`)
 
 ### `terraform_apply`
 This task can be used to apply a calculated terraform plan.
@@ -92,19 +90,17 @@ rake terraform:us-west-1        # Plan and migrate us-west-1
 ```
 
 The following environment variables can be set to tweak `default_task`'s behavior:
-* `ENV['TERRAFORM_AWS_PROJECT']` - Sets `t.aws_project` on the `terraform_plan` tasks (default: `default`)
 * `ENV['TERRAFORM_ENVIRONMENT_GLOB']` - Dir glob used to discover terraform environments (default: `terraform/**/*.tf`)
 * `ENV['TERRAFORM_OUTPUT_BASE']` - Directory to which plan files are saved/read. The environment name is appended to this automatically (default: `output/terraform`)
-* `ENV['TERRAFORM_CREDENTIAL_FILE']` - The path to your AWS credentials file (default: `~/.aws/credentials`)
-* `ENV['TERRAFORM_UNIQUE_STATE']` - Whether to use a unique state for this run. Requires `TERRAFORM_STATE_FILE` OR `TERRAFORM_STATE_DIR_VAR`. Can be any truthy or falsey looking string from [this list][wannabe_bool_string] (e.g `TRUE` or `FALSE`) 
-* `ENV['TERRAFORM_STATE_FILE']` - The full path to a state file to use for this run. Only used when `TERRAFORM_UNIQUE_STATE` is true, and cannot be used in conjunction with `TERRAFORM_STATE_DIR_VAR`. 
+* `ENV['TERRAFORM_UNIQUE_STATE']` - Whether to use a unique state for this run. Requires `TERRAFORM_STATE_FILE` OR `TERRAFORM_STATE_DIR_VAR`. Can be any truthy or falsey looking string from [this list][wannabe_bool_string] (e.g `TRUE` or `FALSE`)
+* `ENV['TERRAFORM_STATE_FILE']` - The full path to a state file to use for this run. Only used when `TERRAFORM_UNIQUE_STATE` is true, and cannot be used in conjunction with `TERRAFORM_STATE_DIR_VAR`.
 * `ENV['TERRAFORM_STATE_DIR_VAR']` - The name of an environment variable that holds a variable that will be used to reference a directory in which to store state files in for this run. This directory will be a subdirectory within the terraform environment. Only used when `TERRAFORM_STATE_DIR` is true, and cannot be used in conjunction with `TERRAFORM_STATE_FILE`
 
 [wannabe_bool_string]: https://github.com/prodis/wannabe_bool#string
 
 #### Unique States
 
-Bu default, `rake-terraform` stores state within a given environment directory.
+By default, `rake-terraform` stores state within a given environment directory.
 
 Sometimes, you will have several infrastructure environments ("infrastructure
 environment" in this block here taken to mean e.g "staging" or "production"
@@ -169,7 +165,7 @@ This would result in a directory layout resembling the following:
           staging
             terraform.tfstate
             terraform.tfstate.backup
-          production 
+          production
             terraform.tfstate
             terraform.tfstate.backup
       app_tier
@@ -180,7 +176,7 @@ This would result in a directory layout resembling the following:
           staging
             terraform.tfstate
             terraform.tfstate.backup
-          production 
+          production
             terraform.tfstate
             terraform.tfstate.backup
 
