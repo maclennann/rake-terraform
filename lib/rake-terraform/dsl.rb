@@ -21,6 +21,15 @@ module RakeTerraform
         RakeTerraform::ApplyTask::Task.new(c.opts).execute
       end
     end
+
+    def terraform_init(*args)
+      require 'rake-terraform/inittask'
+      Rake::Task.define_task(*args) do
+        c = RakeTerraform::InitTask::Config.new
+        yield c
+        RakeTerraform::InitTask::Task.new(c.opts).execute
+      end
+    end
   end
 end
 

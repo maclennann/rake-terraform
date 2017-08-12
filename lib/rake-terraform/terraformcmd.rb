@@ -14,23 +14,19 @@ module RakeTerraform
       system(cmd)
     end
 
+    # perform a 'terraform init'
+    #
+    def tf_init
+      cmd = 'terraform init'
+      system(cmd)
+    end
+
     # perform a 'terraform plan'
     #
-    # access_key and secret_key are optional as terraform and it's underlying
-    # library have supported the standard AWS_PROFILE env var for a while
-    #
-    def tf_plan(access_key = nil, secret_key = nil,
-                output_file = nil, state_file = nil, module_depth = 2)
+    def tf_plan(output_file = nil, state_file = nil, module_depth = 2)
       cmd = 'terraform plan'
       cmd << " -module-depth #{module_depth}"
       state_file && cmd << " -state #{state_file}"
-      if access_key && secret_key
-        # TODO: additional escaped quotes required?
-        cmd << " -var access_key=\"#{access_key}\""
-        cmd << " -var secret_key=\"#{secret_key}\""
-      elsif access_key || secret_key
-        raise ArgumentError, 'Only one of access_key or secret_key given'
-      end
       output_file && cmd << " -out #{output_file}"
       system(cmd)
     end

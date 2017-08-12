@@ -1,20 +1,14 @@
 require 'rake-terraform/env_process'
 
 module RakeTerraform
-  module PlanTask
+  module InitTask
     # Configuration data for terraform plan task
     class Config
       prepend RakeTerraform::EnvProcess
 
-      attr_writer :output_file
-
       def initialize
         # initialize RakeTerraform::EnvProcess
         super
-      end
-
-      def output_file
-        @output_file ||= File.expand_path(default_output)
       end
 
       def input_dir
@@ -31,16 +25,7 @@ module RakeTerraform
       end
 
       def opts
-        Map.new(input_dir:   input_dir,
-                output_file: output_file,
-                unique_state: unique_state,
-                state_file: state_file)
-      end
-
-      private
-
-      def default_output
-        File.join('output', 'terraform', 'plan.tf')
+        Map.new(input_dir: input_dir)
       end
     end
   end
