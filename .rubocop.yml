@@ -6,6 +6,13 @@ Style/FileName:
   Exclude:
     # usability - module name should match the gem name
     - 'lib/rake-terraform.rb'
+Style/EndOfLine:
+  EnforcedStyle: lf
+Style/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - 'spec/**/*.rb'
+    - 'lib/rake-terraform/default_tasks.rb'
 Metrics/AbcSize:
   Exclude:
     # TODO - fix this
