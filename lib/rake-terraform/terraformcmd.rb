@@ -14,6 +14,13 @@ module RakeTerraform
       system(cmd)
     end
 
+    # perform a 'terraform init'
+    #
+    def tf_init
+      cmd = 'terraform init'
+      system(cmd)
+    end
+
     # perform a 'terraform plan'
     #
     # access_key and secret_key are optional as terraform and it's underlying

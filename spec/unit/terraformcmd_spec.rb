@@ -169,6 +169,17 @@ module RakeTerraform
           end
         end
       end
+
+      describe 'tf_init' do
+        let(:default_init_cmd) { 'terraform init' }
+        context 'with no arguments' do
+          it 'should call terraform init' do
+            expect(test_class_inst).to receive(:system)
+              .with(default_init_cmd)
+            test_class_inst.tf_init
+          end
+        end
+      end
     end
   end
 end
