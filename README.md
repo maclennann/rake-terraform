@@ -31,6 +31,8 @@ Or install it yourself as:
 
 ## Usage
 
+**Note**: Versions < 0.3.0 handled credentials as part of this gem/default rake tasks. This is no longer the case with 0.3.0 which defaults to Terraform to handle provider credentials.  
+
 This gem currently provides two different types of tasks:
 
 ### `terraform_plan`
@@ -40,7 +42,6 @@ You can set the following configuration for the task:
 
 * `t.input_dir` - the directory from which to read terraform config (default: `./terraform`)
 * `t.output_file` - the path and name of the plan file to generate (default: `./output/terraform/plan.tf`)
-* `t.credentials` - the path of the [AWS credentials file](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html#cli-config-files) to read from (default: `~/.aws/credentials`)
 * `t.aws_project` - the name of the project to use from your credentials file (default: `default`)
 
 ### `terraform_apply`
@@ -76,13 +77,16 @@ Given, the following terraform hierarchy:
          output.tf
 ```
 
-It wil automatically generate the following rake tasks:
+It will automatically generate the following rake tasks:
 
 ```bash
 rake terraform:all              # Plan and migrate all environments
 
 rake terraform:apply_us-east-1  # Execute plan for us-east-1
 rake terraform:apply_us-west-1  # Execute plan for us-west-1
+
+rake terraform:init_us-east-1  # Execute init for us-east-1
+rake terraform:init_us-west-1  # Execute init for us-west-1
 
 rake terraform:plan_us-east-1   # Plan migration of us-east-1
 rake terraform:plan_us-west-1   # Plan migration of us-west-1
@@ -95,16 +99,15 @@ The following environment variables can be set to tweak `default_task`'s behavio
 * `ENV['TERRAFORM_AWS_PROJECT']` - Sets `t.aws_project` on the `terraform_plan` tasks (default: `default`)
 * `ENV['TERRAFORM_ENVIRONMENT_GLOB']` - Dir glob used to discover terraform environments (default: `terraform/**/*.tf`)
 * `ENV['TERRAFORM_OUTPUT_BASE']` - Directory to which plan files are saved/read. The environment name is appended to this automatically (default: `output/terraform`)
-* `ENV['TERRAFORM_CREDENTIAL_FILE']` - The path to your AWS credentials file (default: `~/.aws/credentials`)
-* `ENV['TERRAFORM_UNIQUE_STATE']` - Whether to use a unique state for this run. Requires `TERRAFORM_STATE_FILE` OR `TERRAFORM_STATE_DIR_VAR`. Can be any truthy or falsey looking string from [this list][wannabe_bool_string] (e.g `TRUE` or `FALSE`) 
-* `ENV['TERRAFORM_STATE_FILE']` - The full path to a state file to use for this run. Only used when `TERRAFORM_UNIQUE_STATE` is true, and cannot be used in conjunction with `TERRAFORM_STATE_DIR_VAR`. 
+* `ENV['TERRAFORM_UNIQUE_STATE']` - Whether to use a unique state for this run. Requires `TERRAFORM_STATE_FILE` OR `TERRAFORM_STATE_DIR_VAR`. Can be any truthy or falsey looking string from [this list][wannabe_bool_string] (e.g `TRUE` or `FALSE`)
+* `ENV['TERRAFORM_STATE_FILE']` - The full path to a state file to use for this run. Only used when `TERRAFORM_UNIQUE_STATE` is true, and cannot be used in conjunction with `TERRAFORM_STATE_DIR_VAR`.
 * `ENV['TERRAFORM_STATE_DIR_VAR']` - The name of an environment variable that holds a variable that will be used to reference a directory in which to store state files in for this run. This directory will be a subdirectory within the terraform environment. Only used when `TERRAFORM_STATE_DIR` is true, and cannot be used in conjunction with `TERRAFORM_STATE_FILE`
 
 [wannabe_bool_string]: https://github.com/prodis/wannabe_bool#string
 
 #### Unique States
 
-Bu default, `rake-terraform` stores state within a given environment directory.
+By default, `rake-terraform` stores state within a given environment directory.
 
 Sometimes, you will have several infrastructure environments ("infrastructure
 environment" in this block here taken to mean e.g "staging" or "production"
@@ -129,7 +132,7 @@ commits between them. Again, depends on clean commit hygiene and easy to mess
 up manual steps.
 
 By using a unique state file for each of your infrastructure environments,
-whilst utilising a single terraform environment, you can avoid repeating
+whilst utilizing a single terraform environment, you can avoid repeating
 yourself and manage roll out changes to each of your infrastructure
 environments better.
 
@@ -169,7 +172,7 @@ This would result in a directory layout resembling the following:
           staging
             terraform.tfstate
             terraform.tfstate.backup
-          production 
+          production
             terraform.tfstate
             terraform.tfstate.backup
       app_tier
@@ -180,7 +183,7 @@ This would result in a directory layout resembling the following:
           staging
             terraform.tfstate
             terraform.tfstate.backup
-          production 
+          production
             terraform.tfstate
             terraform.tfstate.backup
 
