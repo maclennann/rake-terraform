@@ -31,6 +31,8 @@ Or install it yourself as:
 
 ## Usage
 
+**Note**: Versions < 0.3.0 handled credentials as part of this gem/default rake tasks. This is no longer the case with 0.3.0 which defaults to Terraform to handle provider credentials.  
+
 This gem currently provides two different types of tasks:
 
 ### `terraform_plan`
