@@ -61,46 +61,25 @@ module RakeTerraform
             test_class_inst.tf_plan
           end
         end
-        context 'with just an access_key' do
-          it 'should raise an ArgumentError' do
-            expect { test_class_inst.tf_plan(access_key) }
-              .to raise_error(ArgumentError,
-                              'Only one of access_key or secret_key given')
-          end
-        end
-        context 'with just a secret_key' do
-          it 'should raise an ArgumentError' do
-            expect { test_class_inst.tf_plan(nil, secret_key) }
-              .to raise_error(ArgumentError,
-                              'Only one of access_key or secret_key given')
-          end
-        end
-        context 'with both an access_key and a secret_key' do
-          it 'should call terraform plan with those vars configured' do
-            expect(test_class_inst).to receive(:system)
-              .with(cred_plan_cmd)
-            test_class_inst.tf_plan(access_key, secret_key)
-          end
-        end
         context 'with an output file' do
           it 'should call terraform plan with an output file' do
             expect(test_class_inst).to receive(:system)
               .with(output_plan_cmd)
-            test_class_inst.tf_plan(nil, nil, default_output_file)
+            test_class_inst.tf_plan(default_output_file)
           end
         end
         context 'with an state file' do
           it 'should call terraform plan with a state file' do
             expect(test_class_inst).to receive(:system)
               .with(state_file_cmd)
-            test_class_inst.tf_plan(nil, nil, nil, state_file)
+            test_class_inst.tf_plan(nil, state_file)
           end
         end
         context 'where module_depth is given as an argument' do
           it 'should call terraform plan with updated module-depth argument' do
             expect(test_class_inst).to receive(:system)
               .with(module_arg_cmd)
-            test_class_inst.tf_plan(nil, nil, nil, nil, module_arg)
+            test_class_inst.tf_plan(nil, nil, module_arg)
           end
         end
       end
